@@ -1,0 +1,17 @@
+{
+  "name": "mega-back",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "crypto-js": "^4.1.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^4.11.0",
+    "mongoose": "^6.6.7",
+    "nodemon": "^2.0.20"
+  }
+}
