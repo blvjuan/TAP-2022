@@ -27,9 +27,6 @@ exports.signIn = (req, res) => {
 }
 
 
-
-
-
 exports.welcome = (req, res) => {
 	const token = req.cookies.token
 
