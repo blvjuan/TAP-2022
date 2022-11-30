@@ -21,12 +21,24 @@ exports.rendirExamen = async (req, res) => {
     const {token} = req.params;
 
     try {
-      valido = await services.validarToken(token);
-        if(valido){
+      const tokValido = await services.validarToken(token);
+        if(tokValido){
 
-            a=await services.generarExamen(token);
+            const examExist = await services.examenExist(token);
+            if (examExist){
+
+                const mostrar = await services.getExamen(token);
+
+                res.status(200).send(mostrar); 
+
+
+            }else{
+                const exa=await services.generarExamen(token);
             
-            res.status(200).send(a); 
+                res.status(200).send(exa); 
+            }
+
+            
 
         }else{
             res.status(404).send('Token invalido '); // codigo alternativo

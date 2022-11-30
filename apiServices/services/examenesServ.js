@@ -8,9 +8,8 @@ module.exports.validarToken = async (token) => {
 
         console.log("validar " + token)
         const doc = await UsuarioModel.findOne({ tokens: token });
-        const exa = await ExamenesModel.findOne({ tokens: token });
 
-        if (doc == undefined || doc == "" && exa) {
+        if (doc == undefined || doc == "" ) {
             console.log("token invalido ");
             return false;
 
@@ -85,6 +84,52 @@ async function  guardarExamen(token, res) {
     }
 
 }
+
+module.exports.getExamen = async (token) => {
+        
+    try {
+        const examen = await ExamenesModel.findOne({token: token}).populate('preguntas');;
+        const finalRes = examen.preguntas.map(el => ({
+                indice: el.indice,
+                desc: el.desc
+            
+            
+        }))
+
+        return finalRes;
+    } catch (error) {
+        console.log("error mostrando examen", error);
+
+    }
+
+}
+module.exports.examenExist = async (token) => {
+    try {
+            //verificar la fecha TO DO
+        console.log("validar " + token)
+        const exa = await ExamenesModel.findOne({ tokens: token });
+
+        if (exa == undefined || exa == "" ) {
+            console.log("generar examen");
+            return false;
+
+        }
+        else {
+            console.log("examen existente");
+
+            //validar fechas
+            return true;
+        }
+
+
+    } catch (error) {
+        console.log("Error en servidor " + error);
+
+    }
+
+
+}
+
 
 
 function getRandomInt(max) {

@@ -93,24 +93,6 @@ exports.postUsuario = async (req, res) => {    // DATOS NECESARIOS PARA REGISTRA
 
 };
 
-//PATCH USUARIO BY DNI
-/*
-exports.patchUsuario = async (req, res) => {
-    let { dni } = req.params;
-    let { vision } = req.body;
-    try {
-        const doc = await UsuarioModel.findOneAndUpdate({ dni: dni }, { vision: vision });
-        console.log("patch todo ok");
-
-        return res.json({ doc, vision: vision });  // estructura de retorno
-
-    } catch (error) {
-        res.status(500).send('Error en servidor 🍔 :('); // codigo alternativo
-
-    }
-
-};*/
-
 // solicitud para rendir el examen
 exports.solicitarExamen = async (req, res) => {
     let { dni } = req.params;
@@ -125,12 +107,9 @@ exports.solicitarExamen = async (req, res) => {
 
     try {
 
-        console.log("Solicutud de user con dni " + dni +" vision"+vision)
-        const user = await UsuarioModel.findOneAndUpdate({ dni: dni }, { vision: vision });    //trae una version vieja de vision
+        console.log("Solicutud de user con dni " + dni +" vision: "+vision)
+        let user = await UsuarioModel.findOneAndUpdate({ dni: dni }, { vision: vision });    //trae una version vieja de vision
 
-
-
-        let sinAnteojos = null;
 
         if (user.intentos >= 3 ||user.intentos < 0  ) {
             res.status(404).send('Numero de intentos superado o invalido'); // codigo alternativo
@@ -146,8 +125,12 @@ exports.solicitarExamen = async (req, res) => {
                 if (vision == true && user.intentos <= 3) {
 
                     //generar examen real
-                    console.log("token generado: "+token.generar())
-                    return res.send("Puede rendir. El token de su examen es" + token.generar())
+                    tokenRand = token.generar();
+
+                    user.tokens.push(tokenRand);
+                    user.intentos = user.tokens.length;
+                    user.save({});
+                    return res.send("Puede rendir. El token de su examen es" +tokenRand )
 
                 }
                 
