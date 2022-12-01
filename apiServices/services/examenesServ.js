@@ -2,6 +2,7 @@ const UsuarioModel = require("../models/usuariosModel");
 const ExamenesModel = require("../models/examenesModel");
 
 const PreguntasModel = require("../models/preguntasModel");
+const { find } = require("../models/examenesModel");
 
 module.exports.validarToken = async (token) => {
     try {
@@ -32,7 +33,7 @@ module.exports.validarToken = async (token) => {
 module.exports.generarExamen = async (token) => {
 
     let randoms = [];
-    cantPreg = 5;
+    cantPreg = 10;
     try {
 
         const doc = await PreguntasModel.find({});
@@ -76,10 +77,11 @@ module.exports.getExamen = async (token, getResp) => {
         const examen = await ExamenesModel.findOne({ token: token }).populate('preguntas');
         let finalRes = null;
         if (getResp == true) {
+            console.log("respuestas activadas.............. ")
             finalRes = examen.preguntas.map(el => ({
                 indice: el.indice,
                 desc: el.desc,
-                respuestas: el.respuestas
+                respuestas: el.resp
             }))
         } else {
             finalRes = examen.preguntas.map(el => ({
@@ -131,15 +133,46 @@ module.exports.postRespuestas = async (token, body) => {
 
         exa.finalizado=true;
         exa.respuestas=body;
-
         exa.save();
-
-        console.log("exa post resp", exa);
+    
     }
     catch {
         console.log("error post respuesta");
     }
 }
+module.exports.contNota = async (token) => {
+    try {
+        //verificar la fecha TO DO
+        let nota = 0;
+        let exa = await ExamenesModel.findOne({ token: token }).populate("preguntas");
+
+        let respUser = exa.respuestas
+console.log(respUser)
+        exa.preguntas.forEach(correcta => {
+            console.log("resp corre ---->:",correcta.indice)
+           // console.log("resp corre desc ---->:",correcta.resp)
+
+            respUser.forEach(rtasUser => {
+                console.log("resp user: ",rtasUser.indice)
+                    
+                if(correcta.indice == rtasUser.indice && correcta.resp ==rtasUser.respUser ){
+                    nota++;
+                }
+
+           });
+        });
+        //console.log("nota : ", nota);
+        exa.nota = nota;
+
+        exa.save();
+        return nota;
+
+    }
+    catch {
+        console.log("error contNota");
+    }
+}
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -161,3 +194,5 @@ async function guardarExamen(token, res) {
     }
 
 }
+
+

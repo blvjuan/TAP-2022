@@ -27,7 +27,7 @@ exports.rendirExamen = async (req, res) => {
             const examExist = await services.examenExist(token);
             if (examExist) {
 
-                const mostrar = await services.getExamen(token, false);
+                const mostrar = await services.getExamen(token, true); //poner en false TO DO
 
                 res.status(200).send(mostrar);
 
@@ -60,16 +60,43 @@ exports.enviarRespuestas = async (req, res) => {
     
 
     try {
-       /* if(data == undefined || data == "" ){
-            throw new Error("error data")
-        }*/
 
-        let a = await services.postRespuestas(token, data);
-        console.log("enviar: ", a);
+        await services.postRespuestas(token, data);
+        
+        
+        res.status(201).send(data); // codigo alternativo
+
 
     } catch (error) {
         console.log("error al realizar postRespuestas");
         res.status(500).send('error al realizar postRespuestas :  ' + error); // codigo alternativo
+
+    }
+
+
+
+}
+
+
+exports.getNota = async (req, res) => {
+    const { token } = req.params;
+    
+
+    try {
+        
+        let nota = await services.contNota(token);
+        if(nota>=8){
+            res.status(200).send("Aprobado: Su nota final es un "+nota)
+
+        }
+        else{
+            res.status(200).send("Desaprobado: Su nota final es un "+nota + " debe volver a generar un token y rendir el examen")
+
+        }
+        
+
+    } catch (error) {
+        res.status(500).send('error al realizar getNota :  ' + error); // codigo alternativo
 
     }
 

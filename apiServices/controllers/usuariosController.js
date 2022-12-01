@@ -129,7 +129,7 @@ exports.solicitarExamen = async (req, res) => {
                     user.tokens.push(tokenRand);
                     user.intentos = user.tokens.length;
                     user.save({});
-                    return res.send("Puede rendir. El token de su examen es:     " +tokenRand )
+                    return res.send("Puede rendir. El token de su examen es: " +tokenRand )
 
                 }
                 
