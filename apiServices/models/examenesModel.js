@@ -7,8 +7,9 @@ require("../models/examenesModel");
 const examenesSch = new Schema({
     token: String,
     preguntas: [{ type: Schema.Types.ObjectId, ref: 'preguntas'}],
+
     respuestas: [{indice: Number, respUser: Boolean}],
-    
+    finalizado: Boolean,
     nota:Number,
     dniSolcitante: Number,
 });

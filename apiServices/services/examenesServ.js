@@ -9,7 +9,7 @@ module.exports.validarToken = async (token) => {
         console.log("validar " + token)
         const doc = await UsuarioModel.findOne({ tokens: token });
 
-        if (doc == undefined || doc == "" ) {
+        if (doc == undefined || doc == "") {
             console.log("token invalido ");
             return false;
 
@@ -69,32 +69,25 @@ module.exports.generarExamen = async (token) => {
 
 
 }
-async function  guardarExamen(token, res) {
-    let examen = new ExamenesModel({
-        token: token,
-        preguntas: res
-    })
+
+module.exports.getExamen = async (token, getResp) => {
+
     try {
-        examen.save({});
-        console.log("guardando examen")
-
-    } catch (error) {
-        console.log("error guardando examen", error);
-
-    }
-
-}
-
-module.exports.getExamen = async (token) => {
-        
-    try {
-        const examen = await ExamenesModel.findOne({token: token}).populate('preguntas');;
-        const finalRes = examen.preguntas.map(el => ({
+        const examen = await ExamenesModel.findOne({ token: token }).populate('preguntas');
+        let finalRes = null;
+        if (getResp == true) {
+            finalRes = examen.preguntas.map(el => ({
                 indice: el.indice,
-                desc: el.desc
-            
-            
-        }))
+                desc: el.desc,
+                respuestas: el.respuestas
+            }))
+        } else {
+            finalRes = examen.preguntas.map(el => ({
+                indice: el.indice,
+                desc: el.desc,
+            }))
+
+        }
 
         return finalRes;
     } catch (error) {
@@ -105,11 +98,11 @@ module.exports.getExamen = async (token) => {
 }
 module.exports.examenExist = async (token) => {
     try {
-            //verificar la fecha TO DO
+        //verificar la fecha TO DO
         console.log("validar " + token)
-        const exa = await ExamenesModel.findOne({ tokens: token });
+        const exa = await ExamenesModel.findOne({ token: token });
 
-        if (exa == undefined || exa == "" ) {
+        if (exa == undefined || exa == "") {
             console.log("generar examen");
             return false;
 
@@ -130,8 +123,41 @@ module.exports.examenExist = async (token) => {
 
 }
 
+module.exports.postRespuestas = async (token, body) => {
+    try {
+        //verificar la fecha TO DO
 
+        const exa = await ExamenesModel.findOne({ token: token })
+
+        exa.finalizado=true;
+        exa.respuestas=body;
+
+        exa.save();
+
+        console.log("exa post resp", exa);
+    }
+    catch {
+        console.log("error post respuesta");
+    }
+}
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
+}
+
+async function guardarExamen(token, res) {
+    let examen = new ExamenesModel({
+        token: token,
+        preguntas: res,
+        finalizado: false
+    })
+    try {
+        examen.save({});
+        console.log("guardando examen")
+
+    } catch (error) {
+        console.log("error guardando examen", error);
+
+    }
+
 }

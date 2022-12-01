@@ -98,7 +98,6 @@ exports.solicitarExamen = async (req, res) => {
     let { dni } = req.params;
     let { vision } = req.body;//!vision == true ||
     if( vision !=false && vision != true){
-        console.log("visonasa "+vision);
 
             return res.send("👓 Debe confirmar si utiliza anteojos antes de rendir el examen 👓 ")
             // debe confirme el estado de su vista 
@@ -130,14 +129,14 @@ exports.solicitarExamen = async (req, res) => {
                     user.tokens.push(tokenRand);
                     user.intentos = user.tokens.length;
                     user.save({});
-                    return res.send("Puede rendir. El token de su examen es" +tokenRand )
+                    return res.send("Puede rendir. El token de su examen es:     " +tokenRand )
 
                 }
                 
             }
         }
     } catch (error) {
-        res.status(500).send('Error en solicitud 🍔 :('+error); // codigo alternativo
+        res.status(500).send('Error en solicitud 🍔 :(  '+error); // codigo alternativo
 
     }
     
