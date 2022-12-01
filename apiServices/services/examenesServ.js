@@ -33,20 +33,22 @@ module.exports.validarToken = async (token) => {
 module.exports.generarExamen = async (token) => {
 
     let randoms = [];
-    cantPreg = 10;
+    cantPreg = 10 ;
     try {
 
         const doc = await PreguntasModel.find({});
 
         let res = [];
-
+        
         while (randoms.length < cantPreg) {
             let random = getRandomInt(doc.length);
             if (randoms.indexOf(random) == -1) {
                 randoms.push(random);
-                res[randoms.length - 1] = doc[random];
+                res[randoms.length-1] = doc[random];
+
             }
         }
+
         const respIDs = res.map(el => ({ _id: el._id, }));
 
 
@@ -101,7 +103,6 @@ module.exports.getExamen = async (token, getResp) => {
 module.exports.examenExist = async (token) => {
     try {
         //verificar la fecha TO DO
-        console.log("validar " + token)
         const exa = await ExamenesModel.findOne({ token: token });
 
         if (exa == undefined || exa == "") {
@@ -110,7 +111,7 @@ module.exports.examenExist = async (token) => {
 
         }
         else {
-            console.log("examen existente");
+          //  console.log("examen existente");
 
             //validar fechas
             return true;
@@ -147,13 +148,10 @@ module.exports.contNota = async (token) => {
         let exa = await ExamenesModel.findOne({ token: token }).populate("preguntas");
 
         let respUser = exa.respuestas
-console.log(respUser)
         exa.preguntas.forEach(correcta => {
-            console.log("resp corre ---->:",correcta.indice)
            // console.log("resp corre desc ---->:",correcta.resp)
 
             respUser.forEach(rtasUser => {
-                console.log("resp user: ",rtasUser.indice)
                     
                 if(correcta.indice == rtasUser.indice && correcta.resp ==rtasUser.respUser ){
                     nota++;
